@@ -1,7 +1,7 @@
 public class Dog extends Animal {
 
     //  default constructor available in 'Animal'
-    public Dog(String animalName){
+    public Dog(){
         super("Dog");
     }
 
