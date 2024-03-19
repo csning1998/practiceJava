@@ -14,6 +14,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import java.util.Timer;
 
@@ -29,9 +33,12 @@ public class Main extends JPanel implements KeyListener {
     private int speed = 150; // Delay between game updates in milliseconds.
     private static String direction;
     private boolean allowKeyPress; // Determine when the key press is allowed.
-
+    private int score;
+    private int highestScore;
+    String myFile = "eating_snake_score.txt";
     public Main(){
         // Due to duplicate, all the following code can be replaced by the 'reset()' method:
+        read_highest_score();
         reset();
         addKeyListener(this);
 
@@ -58,6 +65,7 @@ public class Main extends JPanel implements KeyListener {
         }, 0, speed);
     }
     private void reset(){
+        score = 0;
         if(snake!=null){
             snake.getSnakeBody().clear();
         }
@@ -81,7 +89,8 @@ public class Main extends JPanel implements KeyListener {
                 allowKeyPress = false; // Stop action
                 t.cancel(); // timer action: Terminate the timer.
                 t.purge(); // timer action: Remove all cancelled timer.
-                int response = JOptionPane.showOptionDialog(this, "Game Over! Would you like to continue?",
+                int response = JOptionPane.showOptionDialog(this,
+                        "Game Over! Your Score is "+ score +".\n  Highest Score: "+ highestScore + "\nWould you like to continue?",
                         "Game Over", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null,
                         JOptionPane.YES_OPTION);
                 switch (response){
@@ -92,18 +101,22 @@ public class Main extends JPanel implements KeyListener {
                         int confirm = JOptionPane.showOptionDialog(this, "Are You Handsome?",
                                 "Warning", JOptionPane.YES_NO_OPTION,JOptionPane.INFORMATION_MESSAGE,null,null,
                                 JOptionPane.YES_NO_OPTION);
+                        write_file(score);
                         switch (confirm){
                             case JOptionPane.CANCEL_OPTION -> {
                                 System.exit(0);
-                                break;
                             }
                             case JOptionPane.NO_OPTION -> System.exit(0);
-                            case JOptionPane.YES_OPTION -> { reset(); return; }
+                            case JOptionPane.YES_OPTION -> {
+                                reset(); return;
+                            }
                         }
-
                     }
                     case JOptionPane.YES_OPTION -> {
                         // Reset all the parameters
+                        if (score > highestScore) {
+                            highestScore = score;
+                        }
                         reset(); return;
                     }
                 }
@@ -135,6 +148,7 @@ public class Main extends JPanel implements KeyListener {
                 snake.getSnakeBody().get(0).y == fruit.getY()){
             // Random set the new coordinate for the fruit after eaten,
             // and which can't be set on the snake body.
+            score ++;
             fruit.setNewLocation(snake);
             fruit.drawFruit(g);
             // System.out.println("Eating!");
@@ -202,6 +216,42 @@ public class Main extends JPanel implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
 
+    }
+    public void read_highest_score(){
+        try{
+            File myObj = new File(myFile);
+            Scanner myReader = new Scanner(myObj);
+            highestScore = myReader.nextInt();
+            myReader.close();
+        } catch(FileNotFoundException e){
+            highestScore = 0;
+            try{
+                File myObj = new File(myFile);
+                // We open the file by object, therefore 'myObj' is used.
+                if(myObj.createNewFile()){
+                    System.out.println("File created: "+myObj.getName());
+                }
+                FileWriter myWriter = new FileWriter(myObj.getName());
+                myWriter.write(""+0);
+                myWriter.close();
+            }catch(IOException err){
+                System.out.println("We have encounter some unexpected issues. We will fix it soon as possible.");
+                err.printStackTrace();
+            }
+        }
+    }
+    public void write_file(int score){
+        try{
+            if(score > highestScore){
+                FileWriter myWriter = new FileWriter(myFile);
+                System.out.println("Renewing Score");
+                myWriter.write("" + score);
+                highestScore = score;
+                myWriter.close();
+            }
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 }
 

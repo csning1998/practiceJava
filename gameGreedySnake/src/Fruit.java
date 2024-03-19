@@ -9,7 +9,7 @@ public class Fruit {
 
     public Fruit(){
         // set the picture used for the fruit
-        img = new ImageIcon("strawberry.png");
+        img = new ImageIcon(getClass().getResource("strawberry.png"));
         // set the coordinate of fruit.
         // the domain of the .random is in [0,1]; therefore multiplying the range of the screen is necessary.
         // the object "Main.CELL_SIZE" specifies the area where the fruit appears.
@@ -24,13 +24,12 @@ public class Fruit {
         return this.y;
     }
     public void drawFruit(Graphics g){
-        img.paintIcon(null, g, this.x, this.y);
-
         // set the colour
 //        g.setColor(Color.RED);
 ////        // shape of the fruit
 //        g.fillOval(this.x, this.y, Main.CELL_SIZE, Main.CELL_SIZE);
-
+//        img.paintIcon(null,g,this.x,this.y);
+        img.paintIcon(null, g, this.x, this.y);
 
     }
     public void setNewLocation(Snake s){

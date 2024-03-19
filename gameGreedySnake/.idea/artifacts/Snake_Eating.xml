@@ -1,0 +1,6 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Snake_Eating">
+    <output-path>$PROJECT_DIR$/out/artifacts/Snake_Eating</output-path>
+    <root id="archive" name="Snake_Eating.jar" />
+  </artifact>
+</component>
